@@ -1,6 +1,6 @@
 # Linked_Data_Semantic_Web_Project
 
-####Daniel Maloney
+######Daniel Maloney
 
 ###Scope:
 The API will allow the user to compare the data between two data sets. 
@@ -11,10 +11,10 @@ draw comparrissons with the increase of population in a city and the increase of
 as well as the severity of the crime.
 
 ###Data Sets Used:
-####CJQ03:Population by Sex, Province or County and CensusYear
+#####CJQ03:Population by Sex, Province or County and CensusYear
 http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
-####CDD01:Recorded Crime Offences by Garda Division, Type of Offence and Quarter
+#####CDD01:Recorded Crime Offences by Garda Division, Type of Offence and Quarter
 http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 
-####*This Readme will be updated as the project continues..*
+#####*This Readme will be updated as the project continues..*
 
