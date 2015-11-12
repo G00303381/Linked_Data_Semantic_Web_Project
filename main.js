@@ -1,7 +1,12 @@
 //Import express to create and configure the HTTP server.
 var express = require('express');
 var sqlite3 = require('sqlite3').verbose();
+var bodyParser = require('body-parser');
 var fs = require('fs');
+
+var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended:true}));
 
 var crimes = JSON.parse(fs.readFileSync('crime_offences.json', 'utf8'));
 var population = JSON.parse(fs.readFileSync('population.json', 'utf8'));
@@ -34,16 +39,26 @@ db.serialize(function()
 
 //db.close();
 
-//Create a HTTP server app.
-var app = express();
-
 //When a user goes to /, return a small help string
 app.get('/', function(req, res) {
     res.send("Welcome to the api.");
     console.log("Port 8080: Something Happening!");
 });
 
-//When a user goes to /allc, return all the crimes database
+app.get('/allp', function(req, res){
+  db.all("SELECT * FROM population", function(err, row) {
+    rowString = JSON.stringify(row, null, '\t');
+    res.sendStatus(rowString);
+  });
+});
+
+app.get('/allc', function(req, res){
+  db.all("SELECT * FROM crime_offences", function(err, row) {
+    rowString = JSON.stringify(row, null, '\t');
+    res.sendStatus(rowString);
+  });
+});
+/*//When a user goes to /allc, return all the crimes database
 var postsc = [];
 db.serialize(function() {
     db.each("SELECT * FROM crime_offences", function(err, row) {
@@ -70,6 +85,7 @@ app.get('/allp', function(req, res) {
     console.log("Retrieving population data...");
     res.send(postsp);
 });
+*/
 
 //Start the server.
 var server = app.listen(8080);
