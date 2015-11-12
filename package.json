@@ -1,0 +1,10 @@
+{
+    "name": "node-api",
+    "version": "1.0.0",
+    "main": "main.js",
+    "author": "Daniel Maloney",
+    "dependencies": {
+        "express": "~4.13.3",
+        "sqlite3": "~3.1.0"
+    }
+}

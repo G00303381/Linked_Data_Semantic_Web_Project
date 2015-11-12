@@ -1,0 +1,75 @@
+[
+  {
+    "Sex":"Both sexes",
+    "Y2006":1187176,
+    "Y2011":1273069,
+    "City":"Dublin"
+  },
+  {
+    "Sex":"Both sexes",
+    "Y2006":481295,
+    "Y2011":519032,
+    "City":"Cork"
+  },
+  {
+    "Sex":"Both sexes",
+    "Y2006":184055,
+    "Y2011":191809,
+    "City":"Limerick"
+  },
+  {
+    "Sex":"Both sexes",
+    "Y2006":231670,
+    "Y2011":250653,
+    "City":"Galway"
+  },
+  {
+    "Sex":"Male",
+    "Y2006":582557,
+    "Y2011":619902,
+    "City":"Dublin"
+  },
+  {
+    "Sex":"Male",
+    "Y2006":240814,
+    "Y2011":257470,
+    "City": "Cork"
+  },
+  {
+    "Sex":"Male",
+    "Y2006":92680,
+    "Y2011":95815,
+    "City":"Limerick"
+  },
+  {
+    "Sex":"Male",
+    "Y2006":116476,
+    "Y2011":124758,
+    "City":"Galway"
+  },
+
+  {
+    "Sex":"Female",
+    "Y2006":604619,
+    "Y2011":653167,
+    "City":"Dublin"
+  },
+  {
+    "Sex":"Female",
+    "Y2006":240481,
+    "Y2011":261562,
+    "City":"Cork"
+  },
+  {
+    "Sex":"Female",
+    "Y2006":91375,
+    "Y2011":95994,
+    "City":"Limerick"
+  },
+  {
+    "Sex":"Female",
+    "Y2006":"115194",
+    "Y2011":"125895",
+    "City":"Galway"
+  }
+]

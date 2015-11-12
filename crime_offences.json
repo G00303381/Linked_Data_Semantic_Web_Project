@@ -1,15 +1,15 @@
 [
     {
-        "GardaStation": "23, Galway Garda Division",
-        "Crime": "0111 ,Murder",
-        "Y2006Q1": 0,
-        "Y2006Q2": 1,
-        "Y2006Q3": 0,
-        "Y2006Q4": 1,
-        "Y2011Q1": 0,
-        "Y2011Q2": 0,
-        "Y2011Q3": 3,
-        "Y2011Q4": 0
+        "GardaStation":"23, Galway Garda Division",
+        "Crime":"0111 ,Murder",
+        "Y2006Q1":0,
+        "Y2006Q2":1,
+        "Y2006Q3":0,
+        "Y2006Q4":1,
+        "Y2011Q1":0,
+        "Y2011Q2":0,
+        "Y2011Q3":3,
+        "Y2011Q4":0
     },
     {
         "GardaStation": "23, Galway Garda Division",
