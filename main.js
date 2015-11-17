@@ -2,39 +2,50 @@
 var express = require('express');
 var sqlite3 = require('sqlite3').verbose();
 var bodyParser = require('body-parser');
+
 var fs = require('fs');
+var file = "crimes.db";
+var exists = fs.existsSync(file);
 
 var app = express();
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended:true}));
+app.use(bodyParser.urlencoded({extended:true}));
 
 var crimes = JSON.parse(fs.readFileSync('crime_offences.json', 'utf8'));
 var population = JSON.parse(fs.readFileSync('population.json', 'utf8'));
 
+//Check id the db file exists
+/*if(!exists) {
+    console.log("Creating DB file.");
+    fs.openSync(file, "w");
+}*/
+
 //Set up a databse using SQLite3
 var db = new sqlite3.Database(':memory:');
 
-
-db.serialize(function() 
-{
-    db.run('CREATE TABLE crime_offences(GardaStation Text, Crime Text, Y2006Q1 INTEGER, Y2006Q2 INTEGER, Y2006Q3 INTEGER, Y2006Q4 INTEGER,                      Y2011Q1 INTEGER, Y2011Q2 INTEGER, Y2011Q3 INTEGER, Y2011Q4 INTEGER)');
+db.serialize(function() {
+    //if(!exists) {
+        db.run('CREATE TABLE crime_offences(GardaStation Text, Crime Text, Y2006Q1 INTEGER, Y2006Q2 INTEGER, Y2006Q3 INTEGER, Y2006Q4 INTEGER,                      Y2011Q1 INTEGER, Y2011Q2 INTEGER, Y2011Q3 INTEGER, Y2011Q4 INTEGER)');
     
-    var stmt = db.prepare('INSERT INTO crime_offences VALUES (?,?,?,?,?,?,?,?,?,?)');
-    crimes.forEach(function (fill) 
-    {
-        stmt.run(fill.GardaStation, fill.Crime, fill.Y2006Q1, fill.Y2006Q2, fill.Y2006Q3, fill.Y2006Q4, fill.Y2011Q1, fill.Y2011Q2, fill.Y2011Q3,                   fill.Y2011Q4);                   
-    });
+        var stmt = db.prepare('INSERT INTO crime_offences VALUES (?,?,?,?,?,?,?,?,?,?)');
+        crimes.forEach(function (fill) 
+        {
+            stmt.run(fill.GardaStation, fill.Crime, fill.Y2006Q1, fill.Y2006Q2, fill.Y2006Q3, fill.Y2006Q4, fill.Y2011Q1, fill.Y2011Q2,                             fill.Y2011Q3, fill.Y2011Q4);
+        });
+        
+        stmt.finalize(); 
+   // }
     
-    db.run('CREATE TABLE population(Sex Text, Y2006 INTEGER, Y2011 INTEGER, City Text)');
-    
-    var stmt = db.prepare('INSERT INTO population VALUES (?,?,?,?)');
-    population.forEach(function (fill)
-    {
-        stmt.run(fill.Sex, fill.Y2006, fill.Y2011, fill.City);
-        console.log(fill.Sex, fill.Y2006, fill.Y2011, fill.City);
-    });
-    
-    stmt.finalize();
+   // if(!exists) {
+        db.run('CREATE TABLE population(Sex Text, Y2006 INTEGER, Y2011 INTEGER, City Text)');
+        var stmt = db.prepare('INSERT INTO population VALUES (?,?,?,?)');
+        population.forEach(function (fill)
+        {
+            stmt.run(fill.Sex, fill.Y2006, fill.Y2011, fill.City);
+        });
+        
+        stmt.finalize(); 
+    //}  
 });
 
 //db.close();
@@ -42,22 +53,43 @@ db.serialize(function()
 //When a user goes to /, return a small help string
 app.get('/', function(req, res) {
     res.send("Welcome to the api.");
-    console.log("Port 8080: Something Happening!");
+    console.log("Port 8080: Something is Happening!");
 });
 
+//When a user goes to /allp, return the population database, formatted.
 app.get('/allp', function(req, res){
-  db.all("SELECT * FROM population", function(err, row) {
+    console.log("Retrieving population data... ");
+    db.all("SELECT * FROM population", function(err, row) {
     rowString = JSON.stringify(row, null, '\t');
     res.sendStatus(rowString);
   });
 });
 
+//When a user goes to /allc, return the population database, formatted.
 app.get('/allc', function(req, res){
-  db.all("SELECT * FROM crime_offences", function(err, row) {
+    console.log("Retrieving crime data... ");
+    db.all("SELECT * FROM crime_offences", function(err, row) {
     rowString = JSON.stringify(row, null, '\t');
     res.sendStatus(rowString);
   });
 });
+
+app.get('/allc/:offence', function(req, res) {
+    console.log("Getting strings like...");
+    db.all("SELECT * FROM crime_offences WHERE Crime LIKE \"%"+ req.params.offence + "%\"", function(err, row) { 
+        rowString = JSON.stringify(row, null, '\t');
+        res.sendStatus(rowString);
+        console.log(req.params.offence);
+    });
+});
+
+/*app.get('/search/:id', function(req, res) {
+  db.all("SELECT * FROM crime_offences WHERE id LIKE '%" + req.params.id +"%'", function(err, row) {
+    rowString = JSON.stringify(row, null, '\t');
+    res.sendStatus(rowString);
+  });
+});*/
+
 /*//When a user goes to /allc, return all the crimes database
 var postsc = [];
 db.serialize(function() {
@@ -86,6 +118,5 @@ app.get('/allp', function(req, res) {
     res.send(postsp);
 });
 */
-
 //Start the server.
 var server = app.listen(8080);
