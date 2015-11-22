@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 //Start the server.
 var server = app.listen(8080);
+console.log("Web service running on localhost:8080");
 
 // import file system
 var fs = require('fs');
@@ -20,11 +21,13 @@ var file2 = "population.db"
 var existsC = fs.existsSync(file);
 var existsP = fs.existsSync(file2);
 
+//====================JSON PARSING==============================
 //Read in the CSV files and convert them into JSON
 //formatted data
 var crimes = JSON.parse(fs.readFileSync('crime_offences.json', 'utf8'));
 var population = JSON.parse(fs.readFileSync('population.json', 'utf8'));
 
+//====================DATABASE FILE CHECKING==============================
 // check if the crimes db file exists
 if(!existsC) {
   console.log("Creating Crimes DB file.");
@@ -37,6 +40,7 @@ if(!existsP) {
   fs.openSync(file2, "w");
 }
 
+//====================DATABASE CREATION==============================
 //Set up a databse using SQLite3 using the imported files
 var dbC = new sqlite3.Database(file);
 var dbP = new sqlite3.Database(file2);
@@ -81,9 +85,11 @@ dbP.serialize(function () {
    }         
 });
 
+//close the connections
 dbC.close();
 dbP.close();
 
+//====================GET STATEMENTS==============================
 //When a user goes to /, return a welcome string
 app.get('/', function(req, res) {
     res.send("Welcome to the api.");
@@ -112,11 +118,24 @@ app.get('/allc', function(req, res) {
     dbC.close();
 });
 
+//get id used for quickly testing the expected results from the post/put methods
 app.get('/offenceId/:id', function(req, res) {
     var dbC = new sqlite3.Database(file);
-    db.all("SELECT id, GardaStation, Crime FROM crime_offences")
-    rowstring = JSON.stringify(row, null, '\t');
-    dbC.close();
+    dbC.get("SELECT id, GardaStation, Crime FROM crime_offences WHERE id = ?", req.params.id, function(err, row) {
+        
+        if(row === undefined) {
+            result.send("Could not find offence with Id: " + req.params.id);
+            res.send(result);
+        }
+        
+        else {
+            rowString = JSON.stringify(row, null, '\t');
+            res.sendStatus(rowString);
+            console.log("Found record with Id: " + req.params.id);
+        }
+        
+    });
+     dbC.close();
 });
 
 //Query the crimes DB using parameters entered by the user to find data specific information about a particulr crime offence.
@@ -145,13 +164,37 @@ app.get('/populationbysex/:sex', function (req, res) {
 //Query to compare Crime Rates and total population by City
 app.get('/compare/:offence/:city', function (req, res)
 {
-    dbP.all("SELECT DISTINCT crime_offences.GardaStation as Station, crime_offences.Crime as Crime, (crime_offences.Y2006Q1 + crime_offences.Y2006Q2 + crime_offences.Y2006Q3 + crime_offences.Y2006Q4 + crime_offences.Y2011Q1 + crime_offences.Y2011Q2 + crime_offences.Y2011Q3 + crime_offences.Y2011Q4) AS Total_Crimes, (population.Y2006 + population.Y2011) AS Total_Population, population.City as City FROM crime_offences LEFT JOIN population WHERE crime_offences.Crime LIKE \"%"+req.params.offence+"%\" AND population.City LIKE \"%"+req.params.city+"%\" ", function(err,row)
+    var dbP = new sqlite3.Database(file2);
+    dbP.all("SELECT FROM crime_offences.GardaStation as Station, crime_offences.Crime as Crime, (crime_offences.Y2006Q1 + crime_offences.Y2006Q2 + crime_offences.Y2006Q3 + crime_offences.Y2006Q4 + crime_offences.Y2011Q1 + crime_offences.Y2011Q2 + crime_offences.Y2011Q3 + crime_offences.Y2011Q4) AS Total_Crimes, (population.Y2006 + population.Y2011) AS Total_Population, population.City as City FROM crime_offences LEFT JOIN population WHERE crime_offences.Crime LIKE \"%"+req.params.offence+"%\" AND population.City LIKE \"%"+req.params.city+"%\" ", function(err,row)
     {
         var rowString2 = JSON.stringify(row, null, '\t');
         res.sendStatus(rowString2);
     });
+    dbP.close();
 });
 
+//====================UPDATE STATEMENTS==============================
+//Update the population of a certain year by a numerical amount
+app.put('/updatePop/:id/:year/:amount', function(req,res) {
+    var dbP = new sqlite3.Database(file2);
+    
+    dbP.all("UPDATE population SET Y"+req.params.year06+" = "+req.params.amount+ " WHERE id="+req.params.id+"", function(err,row) {
+        res.sendStatus("Population with ID " + req.params.id + " of year " + req.params.year + " has been updated.");
+    });
+    dbP.close();
+});
+
+//Update the amount of crime offences for a year by a numerical amount
+app.put('/updateCrime/:id/:year/:amount', function(req,res) {
+    var dbC = new sqlite3.Database(file);
+    
+    dbC.all("UPDATE population SET Y"+req.params.year06+" = "+req.params.amount+ " WHERE id="+req.params.id+"", function(err,row) {
+        res.sendStatus("Crime Offence with ID " + req.params.id + " of year " + req.params.year + " has been updated.");
+    });
+    dbC.close();
+});
+
+//====================DELETE STATEMENTS==============================
 //Query to delete a particualr record in the Crimes db by specific id
 app.delete('/deleteCrime/:id', function (req, res) {
     var dbC = new sqlite3.Database(file);
