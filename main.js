@@ -23,18 +23,19 @@ var existsP = fs.existsSync(file2);
 var crimes = JSON.parse(fs.readFileSync('crime_offences.json', 'utf8'));
 var population = JSON.parse(fs.readFileSync('population.json', 'utf8'));
 
-// check if the db file exists
+// check if the crimes db file exists
 if(!existsC) {
   console.log("Creating Crimes DB file.");
   fs.openSync(file, "w");
 }
 
+// check if the population db file exists
 if(!existsP) {
   console.log("Creating Population DB file.");
   fs.openSync(file2, "w");
 }
 
-//Set up a databse using SQLite3 locally
+//Set up a databse using SQLite3 using files
 var dbC = new sqlite3.Database(file);
 var dbP = new sqlite3.Database(file2);
 
@@ -128,23 +129,35 @@ app.get('/compare/:offence/:city', function (req, res)
 });
 
 app.delete('/deleteCrime/:id', function (req, res) {
-    dbC.run("DELETE FROM crime_offences"
-    + " WHERE id ="+req.params.id+"", function(err, row)
+    dbC.run("DELETE FROM crime_offences WHERE id ="+req.params.id+"", function(err, row)
     {
-        // this.changes tells you how many changes were just done
+        // this.changes tells you how many changes were just made
         if (this.changes == 1) {
-            result = "Deleted offence with id: " +
+            result = "Deleted from Crimes DB with id: " +
                 req.params.id + "\n";
             res.send(result);
         }
         else{
-            result = "Could not find offence with id: " +
+            result = "Could not find record with id: " +
                 req.params.id + "\n";
             res.send(result);
         }
     });
 });
 
-
+app.delete('deletePopulation/:id', function (req, res) {
+   dbP.run("DELETE FROM population WHERE id ="+req.params.id+"", function(err, row) {
+       if(this.changes == 1) {
+           result = "Deleted from Population DB with id:"
+               + " " + req.params.id + "\n";
+           res.send(result);
+       }
+       else{
+           result = "Could not find record with id: " +
+               req.params.id + "\n";
+           res.send(result);
+       }
+   }); 
+});
 //Start the server.
 var server = app.listen(8080);
