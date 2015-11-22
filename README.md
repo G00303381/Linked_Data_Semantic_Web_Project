@@ -17,27 +17,107 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 
 ###Querying the API
-The API makes use of typical REST capabilites (Get, Put, Post and Delete).
+</br>The API makes use of typical REST capabilites (Get, Put, Post and Delete).
 ##General Actions:
-Accessing the root link **(localhost:8000/)** will bring the user to welcome page of the API, a welcome message is displayed as shown below:
+</br>Accessing the root link **(localhost:8000/)** will bring the user to welcome page of the API, a welcome message is displayed as shown below:
 
-The API can also be accessed by using the flowwing links to query the two datasets and return specific information dependant on what the user enters:
+</br>The API can also be accessed by using the flowwing links to query the two datasets and return specific information dependant on what the user enters:
 - **(localhost:8000/allc)**
+```json
+{
+	"id": 2,
+	"GardaStation": "23, Galway Garda Division",
+	"Crime": "033 ,Harassment and related offences",
+	"Y2006Q1": 20,
+	"Y2006Q2": 12,
+	"Y2006Q3": 17,
+	"Y2006Q4": 28,
+	"Y2011Q1": 28,
+	"Y2011Q2": 36,
+	"Y2011Q3": 24,
+	"Y2011Q4": 21
+},
+{
+	"id": 3,
+	"GardaStation": "23, Galway Garda Division",
+	"Crime": "034 ,Assault causing harm, poisoning",
+	"Y2006Q1": 49,
+	"Y2006Q2": 30,
+	"Y2006Q3": 41,
+	"Y2006Q4": 43,
+	"Y2011Q1": 57,
+	"Y2011Q2": 52,
+	"Y2011Q3": 52,
+	"Y2011Q4": 38
+}
+```
 </br>Entering this page of the API will return all of the information displayed in the Crimes.db file.</br>
 - **(localhost:8000/allp)**
-
+```json
+{
+	"id": 1,
+	"Sex": "Both sexes",
+	"Y2006": 1187176,
+	"Y2011": 1273069,
+	"City": "Dublin"
+},	
+{
+    "id": 2,
+	"Sex": "Both sexes",
+	"Y2006": 481295,
+	"Y2011": 519032,
+	"City": "Cork"
+}
+```
 ##Specific Actions Using Parameters:
-Entering this page followed by a numberic value will query the Crimes.db file for the psecific id entered by the user.
+</br>Entering this page followed by a numberic value will query the Crimes.db file for the psecific id entered by the user.
 - **(localhost:8000/offenceId/:id)**
+</br>The expected resonse by searching using _(http://localhost:8080/offenceId/120)_:
+```json
+{
+	"id": 120,
+	"GardaStation": "35, Limerick Garda Division",
+	"Crime": "1022 ,Possession of drugs for personal use"
+}
+```
 </br>Entering this page followed by a string value will query the Crimes.db file for crime offence records with similar values to the string entered by the user.
 - **(localhost:8000/crimesbyoffence/:offence)**
+</br>The expected response by querying the database using _(http://localhost:8080/crimesbyoffence/Rob)_:
+```json
+{
+	"id": 8,
+	"GardaStation": "23, Galway Garda Division",
+	"Crime": "0611 ,Robbery of an establishment or institution",
+	"Y2006Q1": 17,
+	"Y2006Q2": 3,
+	"Y2006Q3": 3,
+	"Y2006Q4": 7,
+	"Y2011Q1": 2,
+	"Y2011Q2": 2,
+	"Y2011Q3": 0,
+	"Y2011Q4": 0
+},
+{
+	"id": 9,
+	"GardaStation": "23, Galway Garda Division",
+	"Crime": "0612 ,Robbery of cash or goods in transit",
+	"Y2006Q1": 0,
+	"Y2006Q2": 0,
+	"Y2006Q3": 2,
+	"Y2006Q4": 2,
+	"Y2011Q1": 0,
+	"Y2011Q2": 0,
+	"Y2011Q3": 0,
+	"Y2011Q4": 0
+},
+```
 </br>Entering this page followed by either Female or Male will query the Population.db file for population results specific to each sex.
 - **(localhost:8000/populationbysex/:sex)**
-</br>
+</br>The expected resonse from querying the database by the female sex _(https://localhost:8080/populationBySex/female)_:
 
 ##Deleting a Record
 By entering the following pages followed by a numeric parameter the databases will find records correpsonding to the numeric value and remove the records from tables completely.
-##Warning: Removing data is permanent.
+**_Warning: removing data is permanent_**
 - **(localhost:8000/deleteCrime/:id)**
 - **(localhost:8000/deletePopulation/:id)**
 
