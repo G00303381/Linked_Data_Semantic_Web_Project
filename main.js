@@ -86,8 +86,8 @@ dbP.serialize(function () {
 });
 
 //close the connections
-dbC.close();
-dbP.close();
+//dbC.close();
+//dbP.close();
 
 //====================GET STATEMENTS==============================
 //When a user goes to /, return a welcome string
@@ -121,10 +121,29 @@ app.get('/allc', function(req, res) {
 //get id used for quickly testing the expected results from the post/put methods
 app.get('/offenceId/:id', function(req, res) {
     var dbC = new sqlite3.Database(file);
-    dbC.get("SELECT id, GardaStation, Crime FROM crime_offences WHERE id = ?", req.params.id, function(err, row) {
+    dbC.get("SELECT * FROM crime_offences WHERE id = ?", req.params.id, function(err, row) {
         
         if(row === undefined) {
-            result.send("Could not find offence with Id: " + req.params.id);
+            result.send("Could not find offence record with Id: " + req.params.id);
+            res.send(result);
+        }
+        
+        else {
+            rowString = JSON.stringify(row, null, '\t');
+            res.sendStatus(rowString);
+            console.log("Found record with Id: " + req.params.id);
+        }
+        
+    });
+     dbC.close();
+});
+
+app.get('/populationId/:id', function(req, res) {
+    var dbP = new sqlite3.Database(file2);
+    dbP.get("SELECT * FROM population WHERE id = ?", req.params.id, function(err, row) {
+        
+        if(row === undefined) {
+            result.send("Could not find population record with Id: " + req.params.id);
             res.send(result);
         }
         
@@ -164,18 +183,18 @@ app.get('/populationbysex/:sex', function (req, res) {
 //Query to compare Crime Rates and total population by City
 app.get('/compare/:offence/:city', function (req, res)
 {
-    var dbP = new sqlite3.Database(file2);
+    var db = new sqlite3.Database(file2);
     dbP.all("SELECT FROM crime_offences.GardaStation as Station, crime_offences.Crime as Crime, (crime_offences.Y2006Q1 + crime_offences.Y2006Q2 + crime_offences.Y2006Q3 + crime_offences.Y2006Q4 + crime_offences.Y2011Q1 + crime_offences.Y2011Q2 + crime_offences.Y2011Q3 + crime_offences.Y2011Q4) AS Total_Crimes, (population.Y2006 + population.Y2011) AS Total_Population, population.City as City FROM crime_offences LEFT JOIN population WHERE crime_offences.Crime LIKE \"%"+req.params.offence+"%\" AND population.City LIKE \"%"+req.params.city+"%\" ", function(err,row)
     {
-        var rowString2 = JSON.stringify(row, null, '\t');
-        res.sendStatus(rowString2);
+        var rowString = JSON.stringify(row, null, '\t');
+        res.sendStatus(rowString);
     });
     dbP.close();
 });
 
 //====================UPDATE STATEMENTS==============================
 //Update the population of a certain year by a numerical amount
-app.put('/updatePop/:id/:year/:amount', function(req,res) {
+app.put('/updatePopulation/:id/:year/:amount', function(req,res) {
     var dbP = new sqlite3.Database(file2);
     
     dbP.all("UPDATE population SET Y"+req.params.year06+" = "+req.params.amount+ " WHERE id="+req.params.id+"", function(err,row) {
