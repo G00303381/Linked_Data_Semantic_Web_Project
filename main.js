@@ -86,8 +86,8 @@ dbP.serialize(function () {
 });
 
 //close the connections
-//dbC.close();
-//dbP.close();
+dbC.close();
+dbP.close();
 
 //====================GET STATEMENTS==============================
 //When a user goes to /, return a welcome string
@@ -180,34 +180,35 @@ app.get('/populationbysex/:sex', function (req, res) {
     dbP.close();
 });
 
+/*
 //Query to compare Crime Rates and total population by City
 app.get('/compare/:offence/:city', function (req, res)
 {
-    var db = new sqlite3.Database(file2);
-    dbP.all("SELECT FROM crime_offences.GardaStation as Station, crime_offences.Crime as Crime, (crime_offences.Y2006Q1 + crime_offences.Y2006Q2 + crime_offences.Y2006Q3 + crime_offences.Y2006Q4 + crime_offences.Y2011Q1 + crime_offences.Y2011Q2 + crime_offences.Y2011Q3 + crime_offences.Y2011Q4) AS Total_Crimes, (population.Y2006 + population.Y2011) AS Total_Population, population.City as City FROM crime_offences LEFT JOIN population WHERE crime_offences.Crime LIKE \"%"+req.params.offence+"%\" AND population.City LIKE \"%"+req.params.city+"%\" ", function(err,row)
+    var db = new sqlite3.Database(file);
+    db.all("SELECT FROM crime_offences.GardaStation as Station, crime_offences.Crime as Crime, (crime_offences.Y2006Q1 + crime_offences.Y2006Q2 + crime_offences.Y2006Q3 + crime_offences.Y2006Q4 + crime_offences.Y2011Q1 + crime_offences.Y2011Q2 + crime_offences.Y2011Q3 + crime_offences.Y2011Q4) AS Total_Crimes, (population.Y2006 + population.Y2011) AS Total_Population, population.City as City FROM crime_offences LEFT JOIN population WHERE crime_offences.Crime LIKE \"%"+req.params.offence+"%\" AND population.City LIKE \"%"+req.params.city+"%\" ", function(err,row)
     {
         var rowString = JSON.stringify(row, null, '\t');
         res.sendStatus(rowString);
     });
-    dbP.close();
-});
+    db.close();
+});*/
 
 //====================UPDATE STATEMENTS==============================
 //Update the population of a certain year by a numerical amount
-app.put('/updatePopulation/:id/:year/:amount', function(req,res) {
+app.put('/updatePopulation/:id/:year/:total', function(req,res) {
     var dbP = new sqlite3.Database(file2);
     
-    dbP.all("UPDATE population SET Y"+req.params.year06+" = "+req.params.amount+ " WHERE id="+req.params.id+"", function(err,row) {
+    dbP.all("UPDATE population SET Y"+req.params.year+" = "+req.params.total+ " WHERE id="+req.params.id+"", function(err,row) {
         res.sendStatus("Population with ID " + req.params.id + " of year " + req.params.year + " has been updated.");
     });
     dbP.close();
 });
 
 //Update the amount of crime offences for a year by a numerical amount
-app.put('/updateCrime/:id/:year/:amount', function(req,res) {
+app.put('/updateCrime/:id/:year/:total', function(req,res) {
     var dbC = new sqlite3.Database(file);
     
-    dbC.all("UPDATE population SET Y"+req.params.year06+" = "+req.params.amount+ " WHERE id="+req.params.id+"", function(err,row) {
+    dbC.all("UPDATE population SET Y"+req.params.year+" = "+req.params.total+ " WHERE id="+req.params.id+"", function(err,row) {
         res.sendStatus("Crime Offence with ID " + req.params.id + " of year " + req.params.year + " has been updated.");
     });
     dbC.close();
