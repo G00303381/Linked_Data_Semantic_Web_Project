@@ -17,19 +17,75 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 
 ###Querying the API
+The API makes use of typical REST capabilites (Get, Put, Post and Delete).
 ##General Actions:
 Accessing the root link **(localhost:8000/)** will bring the user to welcome page of the API, a welcome message is displayed as shown below:
 
 The API can also be accessed by using the flowwing links to query the two datasets and return specific information dependant on what the user enters:
 - **(localhost:8000/allc)**
-<br>Entering this page of the API will return all of the information displayed in the Crimes.db file.</br>
+</br>Entering this page of the API will return all of the information displayed in the Crimes.db file.</br>
 - **(localhost:8000/allp)**
 
-##Specific Actions Ussing Parameters:
+##Specific Actions Using Parameters:
 Entering this page followed by a numberic value will query the Crimes.db file for the psecific id entered by the user.
 - **(localhost:8000/offenceId/:id)**
-Entering this page followed by a string value will query the Crimes.db file for crime offence records with similar values to the string entered by the user.
+</br>Entering this page followed by a string value will query the Crimes.db file for crime offence records with similar values to the string entered by the user.
 - **(localhost:8000/crimesbyoffence/:offence)**
+</br>Entering this page followed by either Female or Male will query the Population.db file for population results specific to each sex.
+- **(localhost:8000/populationbysex/:sex)**
+</br>
 
+##Deleting a Record
+By entering the following pages followed by a numeric parameter the databases will find records correpsonding to the numeric value and remove the records from tables completely.
+##Warning: Removing data is permanent.
+- **(localhost:8000/deleteCrime/:id)**
+- **(localhost:8000/deletePopulation/:id)**
+
+##Code Snippets
+The following code snippets 
+```javascript
+app.get('/allc', function(req, res) {
+    var dbC = new sqlite3.Database(file);
+    console.log("Retrieving crime data... ");
+    dbC.all("SELECT * FROM crime_offences", function(err, row) {
+    rowString = JSON.stringify(row, null, '\t');
+    res.sendStatus(rowString);
+  });
+    dbC.close();
+});
+```
+```javascript
+app.get('/crimesbyoffence/:offence', function(req, res) {
+    var dbC = new sqlite3.Database(file);
+    console.log("Using string " + req.params.offence + " to query the database");
+    dbC.all("SELECT * FROM crime_offences WHERE Crime LIKE \"%"+ req.params.offence + "%\"", function(err, row) { 
+        rowString = JSON.stringify(row, null, '\t');
+        res.sendStatus(rowString);
+    });
+    dbC.close();
+});
+```
+```javascript
+app.delete('/deleteCrime/:id', function (req, res) {
+    var dbC = new sqlite3.Database(file);
+    dbC.run("DELETE FROM crime_offences WHERE id =?", req.params.id, function(err, row)
+    {
+        // this.changes tells you how many changes were just made
+        if (this.changes == 1) {
+            result = "Deleted from Crimes DB with id: " +
+                req.params.id + "\n";
+            res.send(result);
+            console.log("1 row deleted with ID: " + req.params.id);
+        }
+        else{
+            result = "Could not find record with id: " +
+                req.params.id + "\n";
+            res.send(result);
+            console.log("No rows deleted");
+        }
+    });
+    dbC.close();
+});
+```
 #####*This Readme will be updated as the project continues..*
 
