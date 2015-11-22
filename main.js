@@ -16,10 +16,8 @@ console.log("Web service running on localhost:8080");
 
 // import file system
 var fs = require('fs');
-var file = "crimes.db";
-var file2 = "population.db"
-var existsC = fs.existsSync(file);
-var existsP = fs.existsSync(file2);
+var file = "crimes_pop.db";
+var exists = fs.existsSync(file);
 
 //====================JSON PARSING==============================
 //Read in the CSV files and convert them into JSON
@@ -29,32 +27,25 @@ var population = JSON.parse(fs.readFileSync('population.json', 'utf8'));
 
 //====================DATABASE FILE CHECKING==============================
 // check if the crimes db file exists
-if(!existsC) {
+if(!exists) {
   console.log("Creating Crimes DB file.");
   fs.openSync(file, "w");
 }
 
-// check if the population db file exists
-if(!existsP) {
-  console.log("Creating Population DB file.");
-  fs.openSync(file2, "w");
-}
-
 //====================DATABASE CREATION==============================
 //Set up a databse using SQLite3 using the imported files
-var dbC = new sqlite3.Database(file);
-var dbP = new sqlite3.Database(file2);
+var db = new sqlite3.Database(file);
 
 // Create the crime_offences database and populate the
 // table with the JSON files
-dbC.serialize(function() {
+db.serialize(function() {
     // check to see of the database file already exists
-    if(!existsC) {
+    if(!exists) {
         //if the table doesn't exist continue to create the database and corresponding columns
-        dbC.run('CREATE TABLE crime_offences(id INTEGER PRIMARY KEY AUTOINCREMENT, GardaStation Text, Crime Text, '
+        db.run('CREATE TABLE crime_offences(id INTEGER PRIMARY KEY AUTOINCREMENT, GardaStation Text, Crime Text, '
                + 'Y2006Q1 INTEGER, Y2006Q2 INTEGER, Y2006Q3 INTEGER, Y2006Q4 INTEGER, Y2011Q1 INTEGER, '
                + 'Y2011Q2 INTEGER, Y2011Q3 INTEGER, Y2011Q4 INTEGER)');
-        var stmt = dbC.prepare('INSERT INTO crime_offences '
+        var stmt = db.prepare('INSERT INTO crime_offences '
                               +'(GardaStation,Crime,Y2006Q1,Y2006Q2,Y2006Q3,Y2006Q4,Y2011Q1, '
                               +'Y2011Q2,Y2011Q3,Y2011Q4) VALUES (?,?,?,?,?,?,?,?,?,?)');
         
@@ -65,29 +56,22 @@ dbC.serialize(function() {
         });
         
         stmt.finalize();
-    }
-});
-
-//Create the population database and populate the table with the JSON files
-dbP.serialize(function () {
-    //check to see if the databse has already been created
-    if(!existsP) {
-        //if the table doesn't exist contnue to create the table and corresponding columns
-       dbP.run('CREATE TABLE population(id INTEGER PRIMARY KEY AUTOINCREMENT, Sex Text, Y2006 INTEGER, Y2011 INTEGER, City Text)');
-       var stmt = dbP.prepare('INSERT INTO population (Sex, Y2006, Y2011, City) VALUES (?,?,?,?)');
+        
+         //if the table doesn't exist contnue to create the table and corresponding columns
+       db.run('CREATE TABLE population(id INTEGER PRIMARY KEY AUTOINCREMENT, Sex Text, Y2006 INTEGER, Y2011 INTEGER, City Text)');
+       var stmt = db.prepare('INSERT INTO population (Sex, Y2006, Y2011, City) VALUES (?,?,?,?)');
        
         //For each loop to populate the databse with the JSON components
        population.forEach(function (fill) {
            stmt.run(fill.Sex, fill.Y2006, fill.Y2011, fill.City);
-       });
-       
-       stmt.finalize();
-   }         
+       }); 
+        stmt.finalize();
+    }
 });
 
 //close the connections
-dbC.close();
-dbP.close();
+db.close();
+
 
 //====================GET STATEMENTS==============================
 //When a user goes to /, return a welcome string
@@ -98,30 +82,30 @@ app.get('/', function(req, res) {
 
 //When a user goes to /allp, return the population database entirely (tab formatted).
 app.get('/allp', function(req, res){
-    var dbP = new sqlite3.Database(file2);
+    var db = new sqlite3.Database(file);
     console.log("Retrieving population data... ");
-    dbP.all("SELECT * FROM population", function(err, row) {
+    db.all("SELECT * FROM population", function(err, row) {
     rowString = JSON.stringify(row, null, '\t');
     res.sendStatus(rowString);
   });
-    dbP.close();
+    db.close();
 });
 
 //When a user goes to /allc, return the population database (tab formatted).
 app.get('/allc', function(req, res) {
-    var dbC = new sqlite3.Database(file);
+    var db = new sqlite3.Database(file);
     console.log("Retrieving crime data... ");
-    dbC.all("SELECT * FROM crime_offences", function(err, row) {
+    db.all("SELECT * FROM crime_offences", function(err, row) {
     rowString = JSON.stringify(row, null, '\t');
     res.sendStatus(rowString);
   });
-    dbC.close();
+    db.close();
 });
 
 //get id used for quickly testing the expected results from the post/put methods
 app.get('/offenceId/:id', function(req, res) {
-    var dbC = new sqlite3.Database(file);
-    dbC.get("SELECT * FROM crime_offences WHERE id = ?", req.params.id, function(err, row) {
+    var db = new sqlite3.Database(file);
+    db.get("SELECT * FROM crime_offences WHERE id = ?", req.params.id, function(err, row) {
         
         if(row === undefined) {
             result.send("Could not find offence record with Id: " + req.params.id);
@@ -135,12 +119,12 @@ app.get('/offenceId/:id', function(req, res) {
         }
         
     });
-     dbC.close();
+     db.close();
 });
 
 app.get('/populationId/:id', function(req, res) {
-    var dbP = new sqlite3.Database(file2);
-    dbP.get("SELECT * FROM population WHERE id = ?", req.params.id, function(err, row) {
+    var db = new sqlite3.Database(file);
+    db.get("SELECT * FROM population WHERE id = ?", req.params.id, function(err, row) {
         
         if(row === undefined) {
             result.send("Could not find population record with Id: " + req.params.id);
@@ -154,30 +138,30 @@ app.get('/populationId/:id', function(req, res) {
         }
         
     });
-     dbC.close();
+     db.close();
 });
 
 //Query the crimes DB using parameters entered by the user to find data specific information about a particulr crime offence.
 app.get('/crimesbyoffence/:offence', function(req, res) {
-    var dbC = new sqlite3.Database(file);
+    var db = new sqlite3.Database(file);
     console.log("Using string " + req.params.offence + " to query the database");
-    dbC.all("SELECT * FROM crime_offences WHERE Crime LIKE \"%"+ req.params.offence + "%\"", function(err, row) { 
+    db.all("SELECT * FROM crime_offences WHERE Crime LIKE \"%"+ req.params.offence + "%\"", function(err, row) { 
         rowString = JSON.stringify(row, null, '\t');
         res.sendStatus(rowString);
     });
-    dbC.close();
+    db.close();
 });
 
 //Query the population DB using parameters entered by the user to find data specific information about population size by sex
 app.get('/populationbysex/:sex', function (req, res) {
-    var dbP = new sqlite3.Database(file2);
+    var db = new sqlite3.Database(file);
     console.log("Using string " + req.params.sex + " to query the database");
-    dbP.all("SELECT * FROM population WHERE Sex LIKE \"%" + req.params.sex + "%\"", function(err,row)
+    db.all("SELECT * FROM population WHERE Sex LIKE \"%" + req.params.sex + "%\"", function(err,row)
     {
         var rowString = JSON.stringify(row, null, '\t');
         res.sendStatus(rowString);
     });
-    dbP.close();
+    db.close();
 });
 
 /*
@@ -196,33 +180,33 @@ app.get('/compare/:offence/:city', function (req, res)
 //====================UPDATE STATEMENTS==============================
 //Update the population of a certain year by a numerical amount
 app.put('/updatePopulation/:id/:year/:total', function(req,res) {
-    var dbP = new sqlite3.Database(file2);
+    var db = new sqlite3.Database(file);
     
-    dbP.all("UPDATE population SET Y"+req.params.year+" = "+req.params.total+ " WHERE id="+req.params.id+"", function(err,row) {
-        res.sendStatus("Population with ID " + req.params.id + " of year " + req.params.year + " has been updated.");
+    db.all("UPDATE population SET Y"+req.params.year+" = "+req.params.year+ " WHERE id="+req.params.id+"", function(err,row) {
+        res.sendStatus("Populaion with ID " + req.params.id + " of year " + req.params.total + " has been updated.");
     });
-    dbP.close();
+    db.close();
 });
 
 //Update the amount of crime offences for a year by a numerical amount
 app.put('/updateCrime/:id/:year/:total', function(req,res) {
-    var dbC = new sqlite3.Database(file);
+    var db = new sqlite3.Database(file);
     
-    dbC.all("UPDATE population SET Y"+req.params.year+" = "+req.params.total+ " WHERE id="+req.params.id+"", function(err,row) {
-        res.sendStatus("Crime Offence with ID " + req.params.id + " of year " + req.params.year + " has been updated.");
+    db.all("UPDATE crime_offences SET Y"+req.params.year+" = "+req.params.total+ " WHERE id="+req.params.id+"", function(err,row) {
+        res.sendStatus("Crime Offence with ID " + req.params.id + " of year " + req.params.total + " has been updated.");
     });
-    dbC.close();
+    db.close();
 });
 
 //====================DELETE STATEMENTS==============================
 //Query to delete a particualr record in the Crimes db by specific id
 app.delete('/deleteCrime/:id', function (req, res) {
-    var dbC = new sqlite3.Database(file);
-    dbC.run("DELETE FROM crime_offences WHERE id =?", req.params.id, function(err, row)
+    var db = new sqlite3.Database(file);
+    db.run("DELETE FROM crime_offences WHERE id =?", req.params.id, function(err, row)
     {
         // this.changes tells you how many changes were just made
         if (this.changes == 1) {
-            result = "Deleted from Crimes DB with id: " +
+            result = "Deleted from Crimes with id: " +
                 req.params.id + "\n";
             res.send(result);
             console.log("1 row deleted with ID: " + req.params.id);
@@ -234,24 +218,27 @@ app.delete('/deleteCrime/:id', function (req, res) {
             console.log("No rows deleted");
         }
     });
-    dbC.close();
+    db.close();
 });
 
 //Query to delete a particular record in the Population db by specific id
-app.delete('deletePopulation/:id', function (req, res) {
-    var dbP = new sqlite3.Database(file2);
-   dbP.run("DELETE FROM population WHERE id ="+req.params.id+"", function(err, row) {
-       if(this.changes == 1) {
-           result = "Deleted from Population DB with id:"
-               + " " + req.params.id + "\n";
-           res.send(result);
-           console.log("1 row deleted with ID: " + req.params.id);
-       }
-       else{
-           result = "Could not find record with id: " +
-               req.params.id + "\n";
-           res.send(result);
-       }
-   }); 
-    dbP.close();
+app.delete('/deletePopulation/:id', function (req, res) {
+    var db = new sqlite3.Database(file);
+    db.run("DELETE FROM population WHERE id =?", req.params.id, function(err, row)
+    {
+        // this.changes tells you how many changes were just made
+        if (this.changes == 1) {
+            result = "Deleted from Population with id: " +
+                req.params.id + "\n";
+            res.send(result);
+            console.log("1 row deleted with ID: " + req.params.id);
+        }
+        else{
+            result = "Could not find record with id: " +
+                req.params.id + "\n";
+            res.send(result);
+            console.log("No rows deleted");
+        }
+    });
+    db.close();
 });
