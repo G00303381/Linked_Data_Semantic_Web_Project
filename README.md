@@ -19,10 +19,10 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 ###Querying the API
 </br>The API makes use of typical REST capabilites (Get, Put, Post and Delete).
 ##General Actions:
-</br>Accessing the root link **(localhost:8000/)** will bring the user to welcome page of the API, a welcome message is displayed as shown below:
+</br>Accessing the root link **(localhost:8080/)** will bring the user to welcome page of the API, a welcome message is displayed as shown below:
 
 </br>The API can also be accessed by using the flowwing links to query the two datasets and return specific information dependant on what the user enters:
-- **(localhost:8000/allc)**
+- **(localhost:8080/allc)**
 ```json
 {
 	"id": 2,
@@ -52,7 +52,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 }
 ```
 </br>Entering this page of the API will return all of the information displayed in the Crimes.db file.</br>
-- **(localhost:8000/allp)**
+- **(localhost:8080/allp)**
 ```json
 {
 	"id": 1,
@@ -71,7 +71,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 ```
 ##Specific Actions Using Parameters:
 </br>Entering this page followed by a numberic value will query the Crimes.db file for the psecific id entered by the user.
-- **(localhost:8000/offenceId/:id)**
+- **(localhost:8080/offenceId/:id)**
 </br>The expected resonse by searching using _(http://localhost:8080/offenceId/120)_:
 ```json
 {
@@ -81,7 +81,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 }
 ```
 </br>Entering this page followed by a string value will query the Crimes.db file for crime offence records with similar values to the string entered by the user.
-- **(localhost:8000/crimesbyoffence/:offence)**
+- **(localhost:8080/crimesbyoffence/:offence)**
 </br>The expected response by querying the database using _(http://localhost:8080/crimesbyoffence/Rob)_:
 ```json
 {
@@ -112,7 +112,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 },
 ```
 </br>Entering this page followed by either Female or Male will query the Population.db file for population results specific to each sex.
-- **(localhost:8000/populationbysex/:sex)**
+- **(localhost:8080/populationbysex/:sex)**
 </br>The expected resonse from querying the database by the female sex _(https://localhost:8080/populationBySex/female)_:
 ```json
 {
@@ -130,11 +130,20 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 	"City": "Galway"
 }
 ```
+##Updating a Recrod
+By entering the following URLs followed by the listed parameters the databses will find the records by their Id and update the records by the specified amount by year.
+</br>**_Warning: removing data is permanent_**
+- **(localhost:8080/updateCrime/:id/:year/:amount)**
+- **(localhost:8080/updatePopulation/:id/:year/:amount)**
+To verify the updated records the following URLs provide a quick method of confimeing the results:
+- **(localhost:8080/offenceId/:id)**
+- **(localhost:8080/populationId/:id)**
+
 ##Deleting a Record
 By entering the following pages followed by a numeric parameter the databases will find records correpsonding to the numeric value and remove the records from tables completely.
 </br>**_Warning: removing data is permanent_**
-- **(localhost:8000/deleteCrime/:id)**
-- **(localhost:8000/deletePopulation/:id)**
+- **(localhost:8080/deleteCrime/:id)**
+- **(localhost:8080/deletePopulation/:id)**
 
 ##Code Snippets
 The following code snippets 
