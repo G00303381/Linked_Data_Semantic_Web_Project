@@ -114,10 +114,25 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 </br>Entering this page followed by either Female or Male will query the Population.db file for population results specific to each sex.
 - **(localhost:8000/populationbysex/:sex)**
 </br>The expected resonse from querying the database by the female sex _(https://localhost:8080/populationBySex/female)_:
-
+```json
+{
+	"id": 11,
+	"Sex": "Female",
+	"Y2006": 91375,
+	"Y2011": 95994,
+	"City": "Limerick"
+},
+{
+	"id": 12,
+	"Sex": "Female",
+	"Y2006": 115194,
+	"Y2011": 125895,
+	"City": "Galway"
+}
+```
 ##Deleting a Record
 By entering the following pages followed by a numeric parameter the databases will find records correpsonding to the numeric value and remove the records from tables completely.
-**_Warning: removing data is permanent_**
+</br>**_Warning: removing data is permanent_**
 - **(localhost:8000/deleteCrime/:id)**
 - **(localhost:8000/deletePopulation/:id)**
 
@@ -167,5 +182,11 @@ app.delete('/deleteCrime/:id', function (req, res) {
     dbC.close();
 });
 ```
+
+##References:
+Whilst creating this API a number of useful articles and toold have been used for further information please follow the links below:
+- Node.JS and SQLite: <http://blog.modulus.io/nodejs-and-sqlite>
+- Build a RESTful API Using Node and Express 4: <http://blog.modulus.io/nodejs-and-sqlite>
+- Postman Developer Tool for testing the API: <https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en>
 #####*This Readme will be updated as the project continues..*
 
