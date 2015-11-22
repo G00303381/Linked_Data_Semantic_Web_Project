@@ -135,7 +135,7 @@ By entering the following URLs followed by the listed parameters the databses wi
 </br>**_Warning: removing data is permanent_**
 - **(localhost:8080/updateCrime/:id/:year/:amount)**
 - **(localhost:8080/updatePopulation/:id/:year/:amount)**
-To verify the updated records the following URLs provide a quick method of confimeing the results:
+</br>To verify the updated records the following URLs provide a quick method of confimeing the results:
 - **(localhost:8080/offenceId/:id)**
 - **(localhost:8080/populationId/:id)**
 
@@ -197,5 +197,4 @@ Whilst creating this API a number of useful articles and toold have been used fo
 - Node.JS and SQLite: <http://blog.modulus.io/nodejs-and-sqlite>
 - Build a RESTful API Using Node and Express 4: <http://blog.modulus.io/nodejs-and-sqlite>
 - Postman Developer Tool for testing the API: <https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en>
-#####*This Readme will be updated as the project continues..*
 
