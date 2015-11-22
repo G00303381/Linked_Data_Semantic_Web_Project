@@ -1,11 +1,22 @@
 {
-    "name": "node-api",
+    "name": "linked-data-api",
     "version": "1.0.0",
+    "description": "API that compares crime rates and population within a city",
     "main": "main.js",
     "author": "Daniel Maloney",
     "dependencies": {
         "express": "~4.13.3",
         "sqlite3": "~3.1.0",
-        "ejs": "~2.3.4"
-    }
+        "body-parser": "~1.14.1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "repos+https://github.com/G00303381/Linked_Data_Semantic_Web_Project.git"
+    },
+    "athor": "Daniel Maloney",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/G00303381/Linked_Data_Semantic_Web_Project/issues"
+    },
+    "homepage": "https://github.com/G00303381/Linked_Data_Semantic_Web_Project/blob/master/README.md"
 }
