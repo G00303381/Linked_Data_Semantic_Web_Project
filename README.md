@@ -18,6 +18,12 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 
 ###Querying the API
 </br>The API makes use of typical REST capabilites (Get, Put, Post and Delete).
+
+###Installing the API
+</br>The necessary dependencies for the API to work have been added to the package.json file, one only needs to run the _npm install_ command in the project directory. 
+</br>After the command has successfully installed the necesary dependencies, running the _node main.js_ command will initialise the API.
+</br>To test the APIs REST capabilities I used the Postman dekstop applicaion to query the data, the link to the application can be found below.
+
 ##General Actions:
 </br>Accessing the root link **(localhost:8080/)** will bring the user to welcome page of the API, a welcome message is displayed as shown below:
 
@@ -197,4 +203,5 @@ Whilst creating this API a number of useful articles and toold have been used fo
 - Node.JS and SQLite: <http://blog.modulus.io/nodejs-and-sqlite>
 - Build a RESTful API Using Node and Express 4: <http://blog.modulus.io/nodejs-and-sqlite>
 - Postman Developer Tool for testing the API: <https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en>
+- For information on how to query databases: <http://www.w3schools.com/sql/default.asp> 
 
