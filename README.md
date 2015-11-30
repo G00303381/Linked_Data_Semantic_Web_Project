@@ -141,7 +141,7 @@ By entering the following URLs followed by the listed parameters the database wi
 </br>**_Warning: removing data is permanent_**
 - **(localhost:8080/updateCrime/:id/:year/:amount)**
 - **(localhost:8080/updatePopulation/:id/:year/:amount)**
-</br>To verify the updated records the following URLs provide a quick method of confimeing the results:
+</br>To verify the updated records the following URLs provide a quick method of confirming the results:
 - **(localhost:8080/offenceId/:id)**
 - **(localhost:8080/populationId/:id)**
 
@@ -165,24 +165,37 @@ app.get('/allc', function(req, res) {
 });
 ```
 ```javascript
+//Query the crimes DB using parameters entered by the user to find data specific information about a particulr crime offence.
 app.get('/crimesbyoffence/:offence', function(req, res) {
-    var dbC = new sqlite3.Database(file);
+    var db = new sqlite3.Database(file);
     console.log("Using string " + req.params.offence + " to query the database");
-    dbC.all("SELECT * FROM crime_offences WHERE Crime LIKE \"%"+ req.params.offence + "%\"", function(err, row) { 
+    db.all("SELECT * FROM crime_offences WHERE Crime LIKE \"%"+ req.params.offence + "%\"", function(err, row) { 
         rowString = JSON.stringify(row, null, '\t');
         res.sendStatus(rowString);
     });
-    dbC.close();
+    db.close();
 });
 ```
 ```javascript
-app.delete('/deleteCrime/:id', function (req, res) {
-    var dbC = new sqlite3.Database(file);
-    dbC.run("DELETE FROM crime_offences WHERE id =?", req.params.id, function(err, row)
+//Update the population of a certain year by a numerical amount
+app.put('/updatePopulation/:id/:year/:total', function(req,res) {
+    var db = new sqlite3.Database(file);
+    
+    db.all("UPDATE population SET Y"+req.params.year+" = "+req.params.year+ " WHERE id="+req.params.id+"", function(err,row) {
+        res.sendStatus("Populaion with ID " + req.params.id + " of year " + req.params.total + " has been updated.");
+    });
+    db.close();
+});
+```
+```javascript
+//Query to delete a particular record in the Population db by specific id
+app.delete('/deletePopulation/:id', function (req, res) {
+    var db = new sqlite3.Database(file);
+    db.run("DELETE FROM population WHERE id =?", req.params.id, function(err, row)
     {
         // this.changes tells you how many changes were just made
         if (this.changes == 1) {
-            result = "Deleted from Crimes DB with id: " +
+            result = "Deleted from Population with id: " +
                 req.params.id + "\n";
             res.send(result);
             console.log("1 row deleted with ID: " + req.params.id);
@@ -194,7 +207,7 @@ app.delete('/deleteCrime/:id', function (req, res) {
             console.log("No rows deleted");
         }
     });
-    dbC.close();
+    db.close();
 });
 ```
 
