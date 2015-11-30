@@ -57,7 +57,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 	"Y2011Q4": 38
 }
 ```
-</br>Entering this page of the API will return all of the information displayed in the Crimes.db file.</br>
+</br>Entering this page of the API will return all of the information displayed in the crime_offences table.</br>
 - **(localhost:8080/allp)**
 ```json
 {
@@ -76,9 +76,9 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 }
 ```
 ##Specific Actions Using Parameters:
-</br>Entering this page followed by a numberic value will query the Crimes.db file for the psecific id entered by the user.
+</br>Entering this page followed by a numberic value will query the crime_offences table for the specific id entered by the user.
 - **(localhost:8080/offenceId/:id)**
-</br>The expected resonse by searching using _(http://localhost:8080/offenceId/120)_:
+</br>The expected response by searching using _(http://localhost:8080/offenceId/120)_:
 ```json
 {
 	"id": 120,
@@ -86,7 +86,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 	"Crime": "1022 ,Possession of drugs for personal use"
 }
 ```
-</br>Entering this page followed by a string value will query the Crimes.db file for crime offence records with similar values to the string entered by the user.
+</br>Entering this page followed by a string value will query the crime)offences table for crime offence records with similar values to the string entered by the user.
 - **(localhost:8080/crimesbyoffence/:offence)**
 </br>The expected response by querying the database using _(http://localhost:8080/crimesbyoffence/Rob)_:
 ```json
@@ -117,7 +117,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 	"Y2011Q4": 0
 },
 ```
-</br>Entering this page followed by either Female or Male will query the Population.db file for population results specific to each sex.
+</br>Entering this page followed by either Female or Male will query the population table for population results specific to each sex.
 - **(localhost:8080/populationbysex/:sex)**
 </br>The expected resonse from querying the database by the female sex _(https://localhost:8080/populationBySex/female)_:
 ```json
@@ -136,8 +136,8 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 	"City": "Galway"
 }
 ```
-##Updating a Recrod
-By entering the following URLs followed by the listed parameters the databses will find the records by their Id and update the records by the specified amount by year.
+##Updating a Record
+By entering the following URLs followed by the listed parameters the database will find the records by their Id and update the records by the specified amount by year.
 </br>**_Warning: removing data is permanent_**
 - **(localhost:8080/updateCrime/:id/:year/:amount)**
 - **(localhost:8080/updatePopulation/:id/:year/:amount)**
@@ -146,7 +146,7 @@ By entering the following URLs followed by the listed parameters the databses wi
 - **(localhost:8080/populationId/:id)**
 
 ##Deleting a Record
-By entering the following pages followed by a numeric parameter the databases will find records correpsonding to the numeric value and remove the records from tables completely.
+By entering the following pages followed by a numeric parameter the database will find records correpsonding to the numeric value and remove the records from tables completely.
 </br>**_Warning: removing data is permanent_**
 - **(localhost:8080/deleteCrime/:id)**
 - **(localhost:8080/deletePopulation/:id)**
