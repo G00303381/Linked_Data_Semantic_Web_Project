@@ -199,7 +199,7 @@ app.delete('/deleteCrime/:id', function (req, res) {
 ```
 
 ##References:
-Whilst creating this API a number of useful articles and toold have been used for further information please follow the links below:
+Whilst creating this API a number of useful articles and tools have been used to help me better understand how APIs are created, and how to implement REST functionalities. For further information please follow the links below:
 - Node.JS and SQLite: <http://blog.modulus.io/nodejs-and-sqlite>
 - Build a RESTful API Using Node and Express 4: <http://blog.modulus.io/nodejs-and-sqlite>
 - Postman Developer Tool for testing the API: <https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en>
