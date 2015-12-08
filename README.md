@@ -137,7 +137,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 }
 ```
 ##Updating a Record
-By entering the following URLs followed by the listed parameters the database will find the records by their Id and update the records by the specified amount by year.
+By entering the following URLs the API perfromes a **put** request and using the following listed parameters the database will find the records by their Id and update the records by the specified amount by year.
 </br>**_Warning: removing data is permanent_**
 - **(localhost:8080/updateCrime/:id/:year/:amount)**
 - **(localhost:8080/updatePopulation/:id/:year/:amount)**
@@ -218,3 +218,5 @@ Whilst creating this API a number of useful articles and tools have been used to
 - Postman Developer Tool for testing the API: <https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en>
 - For information on how to query databases: <http://www.w3schools.com/sql/default.asp> 
 
+##Additional Notes:
+Originally the plan was to use MongoDB to handle the database as oppose to using SQLite3.
