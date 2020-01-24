@@ -1,8 +1,8 @@
 # Linked_Data_Semantic_Web_Project
 
-######Daniel Maloney
+###### Daniel Maloney
 
-###Scope:
+### Scope:
 The API will allow the user to compare the data between two data sets. 
 The first data set is a public census taken for the years 2006 and 2011 in four major cities 
 in Ireland (Galway, Limerick, Dublin and Cork). The second data set contains crime activity during
@@ -10,21 +10,21 @@ the corresponding years (2006 and 2011) in each of these four cities. The idea o
 draw comparrissons with the increase of population in a city and the increase of crime rate within that city, 
 as well as the severity of the crime.
 
-###The API uses two Data Sets:
+### The API uses two Data Sets:
 - CJQ03:Population by Sex, Province or County and CensusYear
 http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 - CDD01:Recorded Crime Offences by Garda Division, Type of Offence and Quarter
 http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 
-###Querying the API
+### Querying the API
 </br>The API makes use of typical REST capabilites (Get, Put, Post and Delete).
 
-###Installing the API
+### Installing the API
 </br>The necessary dependencies for the API to work have been added to the package.json file, one only needs to run the _npm install_ command in the project directory. 
 </br>After the command has successfully installed the necesary dependencies, running the _node main.js_ command will initialise the API.
 </br>To test the APIs REST capabilities I used the Postman dekstop applicaion to query the data, the link to the application can be found below.
 
-##General Actions:
+## General Actions:
 </br>Accessing the root link **(localhost:8080/)** will bring the user to welcome page of the API, a welcome message is displayed as shown below:
 
 </br>The API can also be accessed by using the flowwing links to query the two datasets and return specific information dependant on what the user enters:
@@ -75,7 +75,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 	"City": "Cork"
 }
 ```
-##Specific Actions Using Parameters:
+## Specific Actions Using Parameters:
 </br>Entering this page followed by a numberic value will query the crime_offences table for the specific id entered by the user.
 - **(localhost:8080/offenceId/:id)**
 </br>The expected response by searching using _(http://localhost:8080/offenceId/120)_:
@@ -136,7 +136,7 @@ http://www.cso.ie/px/pxeirestat/Statire/SelectVarVal/saveselections.asp
 	"City": "Galway"
 }
 ```
-##Updating a Record
+## Updating a Record
 By entering the following URLs the API perfromes a **put** request and using the following listed parameters the database will find the records by their Id and update the records by the specified amount by year.
 </br>**_Warning: removing data is permanent_**
 - **(localhost:8080/updateCrime/:id/:year/:amount)**
@@ -145,13 +145,13 @@ By entering the following URLs the API perfromes a **put** request and using the
 - **(localhost:8080/offenceId/:id)**
 - **(localhost:8080/populationId/:id)**
 
-##Deleting a Record
+## Deleting a Record
 By entering the following pages followed by a numeric parameter the database will find records correpsonding to the numeric value and remove the records from tables completely.
 </br>**_Warning: removing data is permanent_**
 - **(localhost:8080/deleteCrime/:id)**
 - **(localhost:8080/deletePopulation/:id)**
 
-##Code Snippets
+## Code Snippets
 The following code snippets 
 ```javascript
 app.get('/allc', function(req, res) {
@@ -211,12 +211,12 @@ app.delete('/deletePopulation/:id', function (req, res) {
 });
 ```
 
-##References:
+## References:
 Whilst creating this API a number of useful articles and tools have been used to help me better understand how APIs are created, and how to implement REST functionalities. For further information please follow the links below:
 - Node.JS and SQLite: <http://blog.modulus.io/nodejs-and-sqlite>
 - Build a RESTful API Using Node and Express 4: <http://blog.modulus.io/nodejs-and-sqlite>
 - Postman Developer Tool for testing the API: <https://chrome.google.com/webstore/detail/postman/fhbjgbiflinjbdggehcddcbncdddomop?hl=en>
 - For information on how to query databases: <http://www.w3schools.com/sql/default.asp> 
 
-##Additional Notes:
+## Additional Notes:
 Originally the plan was to use MongoDB to handle the database as oppose to using SQLite3.
